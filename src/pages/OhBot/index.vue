@@ -52,8 +52,8 @@ export default {
           name: '美甲保養1',
           user: '王小美',
           reserve: {
-            from: new Date(2021, 3, 22, 8, 30),
-            to: new Date(2021, 3, 22, 9, 30)
+            from: new Date(2021, 2, 22, 8, 30),
+            to: new Date(2021, 2, 22, 9, 30)
           }
         },
         {
@@ -61,10 +61,18 @@ export default {
           name: '美甲保養2',
           user: '王大美',
           reserve: {
-            from: new Date(2021, 3, 26, 15, 30),
-            to: new Date(2021, 3, 26, 19, 30)
+            from: new Date(2021, 2, 26, 15, 30),
+            to: new Date(2021, 2, 26, 19, 30)
           }
-
+        },
+        {
+          id: '3',
+          name: '美甲保養3',
+          user: '王中美',
+          reserve: {
+            from: new Date(2021, 3, 1, 15, 30),
+            to: new Date(2021, 3, 1, 19, 30)
+          }
         }
       ]
     }

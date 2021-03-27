@@ -8,11 +8,10 @@
     </div>
     <div class="week_container_body">
       <WeekBody
-        :today="current"
-        :current-date="currentDate"
-        :current-week-day="currentWeekDay"
-        :first-date-of-week="firstDateOfWeek"
-        :orders="orders"
+        :current="current"
+        :today="today"
+        :orders="filtOrders"
+        :days-of-week="daysOfWeek"
       />
     </div>
   </div>
@@ -52,15 +51,19 @@ export default {
     }
   },
   computed: {
-    currentDate () {
-      return this.calendar.date
-    },
-    currentWeekDay () {
-      return this.calendar.weekDay
-    },
     firstDateOfWeek () {
       const { year, month, date, weekDay } = this.calendar
-      const firstDate = new Date(year, month, date - weekDay)
+      const firstDate = new Date(year, month, date - weekDay + this.startWeekDay)
+      return {
+        year: firstDate.getFullYear(),
+        month: firstDate.getMonth(),
+        date: firstDate.getDate(),
+        weekDay: firstDate.getDay()
+      }
+    },
+    lastDateOfWeek () {
+      const { year, month, date } = this.firstDateOfWeek
+      const firstDate = new Date(year, month, date + 7)
       return {
         year: firstDate.getFullYear(),
         month: firstDate.getMonth(),
@@ -73,7 +76,7 @@ export default {
       const { year, month, date } = this.firstDateOfWeek
       let day = null
       for (let i = 0; i < 7; i++) {
-        day = new Date(year, month, date + i + this.startWeekDay)
+        day = new Date(year, month, date + i)
         days.push({
           year: day.getFullYear(),
           month: day.getMonth(),
@@ -82,6 +85,18 @@ export default {
         })
       }
       return days
+    },
+    filtOrders () {
+      const { firstDateOfWeek, lastDateOfWeek } = this
+      const first = new Date(firstDateOfWeek.year, firstDateOfWeek.month, firstDateOfWeek.date)
+      const last = new Date(lastDateOfWeek.year, lastDateOfWeek.month, lastDateOfWeek.date)
+
+      const { orders } = this
+      return orders
+        .filter(order => {
+          const orderDate = order.reserve.from
+          return orderDate > first && orderDate < last
+        })
     }
   },
   mounted () {

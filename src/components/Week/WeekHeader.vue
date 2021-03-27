@@ -20,12 +20,12 @@
       @click="setActiveDay(d)"
     >
       <div class="weekHeader_weekday_name">
-        {{ getDayName(d) }}
+        {{ getDayName(d-1) }}
       </div>
       <div class="weekHeader_weekday_label">
-        {{ getDate(d) }}
+        {{ getDate(d-1) }}
       </div>
-      <span :class="{'weekHeader_current': isToday(d)}" />
+      <span :class="{'weekHeader_current': isToday(d-1)}" />
     </div>
   </div>
 </template>
@@ -52,16 +52,16 @@ export default {
         6: 'S',
         0: 'S'
       }
-      return (d) => mapDay[daysOfWeek[d - 1].weekDay]
+      return (d) => mapDay[daysOfWeek[d].weekDay]
     },
     getDate () {
       const { daysOfWeek } = this
-      return (d) => daysOfWeek[d - 1].date
+      return (d) => daysOfWeek[d].date
     },
     isToday () {
       const { today, daysOfWeek } = this
       return d => {
-        const day = daysOfWeek[d - 1]
+        const day = daysOfWeek[d]
         const { year, month, date } = today
         return day.year === year && day.month === month && day.date === date
       }

@@ -19,12 +19,12 @@
       <!-- 現在時間 PIN 針 -->
       <span
         class="pin"
-        :class="{ active: d === today.getDay() }"
+        :class="{ active: isToday(d-1) }"
         :style="{ top: pinTop + 'px' }"
       />
       <!-- 顯示預約事件 -->
       <div
-        v-for="order in orderFilters(d)"
+        v-for="order in weekDayOrders(d-1)"
         :key="order.id"
         class="weekBody_order"
         :style="order.style"
@@ -46,8 +46,10 @@
 export default {
   name: 'WeekBody',
   props: {
-    today: { type: Date, required: true },
+    current: { type: Date, required: true },
+    today: { type: Object, required: true },
     orders: { type: Array, required: true },
+    daysOfWeek: { type: Array, required: true },
     use12Hour: { type: Boolean, default: true }
   },
   computed: {
@@ -61,28 +63,24 @@ export default {
       }
     },
     pinTop () {
-      const { today } = this
+      const { current } = this
       const oneDay = 24 * 60 * 60
-      const totalSec = today.getSeconds() + 60 * today.getMinutes() + 60 * 60 * today.getHours()
+      const totalSec = current.getSeconds() + 60 * current.getMinutes() + 60 * 60 * current.getHours()
       const todayMinisec = (totalSec % oneDay)
       return todayMinisec * 70 * 24 / oneDay
     },
-    // 本週起始日
-    getStartWeekDate () {
-      const weekDay = this.today.getDay()
-      const todayDate = this.today.getDate()
-      return todayDate - weekDay + 1
-    },
+    // 處理當日訂單的樣式
     ordersWithStyle () {
       const { orders } = this
       const oneDay = 24 * 60 * 60
+      const HeightPerHour = 70
 
       return orders
         .map(order => {
           const { from, to } = order.reserve
-          const height = (to - from) * 70 * 24 / oneDay / 1000
+          const height = (to - from) * HeightPerHour / (60 * 60 * 1000)
           const totalSec = from.getSeconds() + 60 * from.getMinutes() + 60 * 60 * from.getHours()
-          const top = (totalSec % oneDay) * 70 * 24 / oneDay
+          const top = (totalSec % oneDay) * HeightPerHour * 24 / oneDay
           return {
             ...order,
             style: {
@@ -92,14 +90,22 @@ export default {
           }
         })
     },
-    orderFilters () {
-      const { ordersWithStyle } = this
-      return (weekDay) => {
-        return ordersWithStyle
-          .filter(order => {
-            const orderDate = order.reserve.from.getDate()
-            return weekDay + this.getStartWeekDate - 1 === orderDate
-          })
+    // 取得當日的訂單
+    weekDayOrders () {
+      const { ordersWithStyle, daysOfWeek } = this
+      return (d) => {
+        const day = daysOfWeek[d]
+        return ordersWithStyle.filter(order => {
+          return order.reserve.from.getDay() === day.weekDay
+        })
+      }
+    },
+    isToday () {
+      const { today, daysOfWeek } = this
+      return d => {
+        const day = daysOfWeek[d]
+        const { year, month, date } = today
+        return day.year === year && day.month === month && day.date === date
       }
     }
   }
@@ -161,6 +167,7 @@ $orderBg: rgba(229, 229, 229, 0.7);
     position: absolute;
     top: 200px;
     left: 0;
+    z-index: 2;
     &:not(.active) {
       display: none;
     }
