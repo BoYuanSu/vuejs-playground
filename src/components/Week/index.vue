@@ -3,15 +3,15 @@
     <div class="week_container_header">
       <WeekHeader
         :today="today"
-        :current-date="currentDate"
-        :current-week-day="currentWeekDay"
+        :days-of-week="daysOfWeek"
       />
     </div>
     <div class="week_container_body">
       <WeekBody
-        :today="today"
+        :today="current"
         :current-date="currentDate"
         :current-week-day="currentWeekDay"
+        :first-date-of-week="firstDateOfWeek"
         :orders="orders"
       />
     </div>
@@ -33,16 +33,55 @@ export default {
     orders: { type: Array, required: true }
   },
   data () {
+    const now = new Date()
     return {
-      today: new Date()
+      current: now,
+      today: {
+        year: now.getFullYear(),
+        month: now.getMonth(),
+        date: now.getDate(),
+        weekDay: now.getDay()
+      },
+      calendar: {
+        year: now.getFullYear(),
+        month: now.getMonth(),
+        date: now.getDate(),
+        weekDay: now.getDay()
+      },
+      startWeekDay: 1
     }
   },
   computed: {
     currentDate () {
-      return this.today.getDate()
+      return this.calendar.date
     },
     currentWeekDay () {
-      return this.today.getDay()
+      return this.calendar.weekDay
+    },
+    firstDateOfWeek () {
+      const { year, month, date, weekDay } = this.calendar
+      const firstDate = new Date(year, month, date - weekDay)
+      return {
+        year: firstDate.getFullYear(),
+        month: firstDate.getMonth(),
+        date: firstDate.getDate(),
+        weekDay: firstDate.getDay()
+      }
+    },
+    daysOfWeek () {
+      const days = []
+      const { year, month, date } = this.firstDateOfWeek
+      let day = null
+      for (let i = 0; i < 7; i++) {
+        day = new Date(year, month, date + i + this.startWeekDay)
+        days.push({
+          year: day.getFullYear(),
+          month: day.getMonth(),
+          date: day.getDate(),
+          weekDay: day.getDay()
+        })
+      }
+      return days
     }
   },
   mounted () {
@@ -53,7 +92,7 @@ export default {
   },
   methods: {
     updateCurrentTime () {
-      this.today = new Date()
+      this.current = new Date()
     }
   }
 }
