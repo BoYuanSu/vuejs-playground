@@ -38,6 +38,7 @@ $secondary: #dedaf4;
         height: 5rem;
         padding-top: 1rem;
         background-image: linear-gradient(to bottom, transparent, #f2f2f2);
+        z-index: 1;
         > button {
             border-radius: 10px;
             box-shadow: 0 5px 2px 0px #aaa;

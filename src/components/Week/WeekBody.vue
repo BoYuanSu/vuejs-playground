@@ -148,6 +148,8 @@ $orderBg: rgba(229, 229, 229, 0.7);
     border-radius: 10px;
     z-index: 1;
     text-align: left;
+    padding: 0.5rem;
+    font-size: 0.8rem;
   }
   &_order_name {
     font-weight: 550;
