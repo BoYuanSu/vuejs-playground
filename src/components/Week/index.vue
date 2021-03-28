@@ -30,6 +30,7 @@
         :orders="filtSingleDateOrders"
       />
     </transition-group>
+    <DatePicker v-if="showPicker" />
   </div>
 </template>
 
@@ -37,6 +38,7 @@
 import WeekHeader from './WeekHeader'
 import WeekBody from './WeekBody'
 import DayBody from './DayBody'
+import DatePicker from './DatePicker'
 
 let timer = null
 export default {
@@ -44,7 +46,8 @@ export default {
   components: {
     WeekHeader,
     WeekBody,
-    DayBody
+    DayBody,
+    DatePicker
   },
   props: {
     mode: { type: String, required: true },
@@ -67,7 +70,8 @@ export default {
         date: now.getDate(),
         weekDay: now.getDay()
       },
-      startWeekDay: 1
+      startWeekDay: 1,
+      showPicker: true
     }
   },
   computed: {

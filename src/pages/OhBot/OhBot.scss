@@ -70,6 +70,7 @@ $secondary: #dedaf4;
         background-image: linear-gradient(to bottom, rgba(255,255,255, 0) 0%, #f2f2f2 100%);
         z-index: 1;
         > button {
+            width: 9rem;
             border-radius: 10px;
             box-shadow: 0 5px 2px 0px #aaa;
             &::before {

@@ -1,14 +1,7 @@
 <template>
   <div class="weekHeader">
     <div class="weekHeader_col">
-      <span class="weekHeader_icon text-primary"><svg
-        id="fi_2948239"
-        enable-background="new 0 0 512 512"
-        height="16"
-        viewBox="0 0 512 512"
-        width="16"
-        xmlns="http://www.w3.org/2000/svg"
-      ><g><path d="m446 40h-46v-24c0-8.836-7.163-16-16-16s-16 7.164-16 16v24h-224v-24c0-8.836-7.163-16-16-16s-16 7.164-16 16v24h-46c-36.393 0-66 29.607-66 66v340c0 36.393 29.607 66 66 66h380c36.393 0 66-29.607 66-66v-340c0-36.393-29.607-66-66-66zm34 406c0 18.778-15.222 34-34 34h-380c-18.778 0-34-15.222-34-34v-265c0-2.761 2.239-5 5-5h438c2.761 0 5 2.239 5 5z" /></g></svg></span>
+      <span class="weekHeader_icon text-primary"><i class="far fa-calendar" /></span>
     </div>
     <div
       v-for="d in 7"
@@ -92,6 +85,22 @@ export default {
   box-shadow: 0 5px 5px #aaaaaa;
   display: flex;
   padding-bottom: 1rem;
+  &_icon {
+    background-color: #dedaf4;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: block;
+    position: relative;
+    margin: auto;
+    margin-top: 0.5rem;
+    > i {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
   &_col {
     width: calc(100% / 8);
     cursor: pointer;

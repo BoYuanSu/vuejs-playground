@@ -52,7 +52,7 @@
       />
     </div>
     <div class="ohBot_reserve">
-      <button class="btn btn-primary px-4">
+      <button class="btn btn-primary">
         新增預約
       </button>
     </div>
