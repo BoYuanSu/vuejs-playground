@@ -4,32 +4,52 @@
       <WeekHeader
         :today="today"
         :days-of-week="daysOfWeek"
+        :calendar="bodyComponent === 'DayBody' ? calendar: {}"
+        @selectDate="selectDateHandler"
       />
     </div>
-    <div class="week_container_body">
+    <transition-group
+      :name="transitionName"
+      tag="div"
+      class="week_container_body"
+      mode="out-in"
+    >
       <WeekBody
+        v-if="bodyComponent === 'WeekBody'"
+        key="WeekBody"
         :current="current"
         :today="today"
         :orders="filtOrders"
         :days-of-week="daysOfWeek"
       />
-    </div>
+      <DayBody
+        v-if="bodyComponent === 'DayBody'"
+        key="DayBody"
+        :current="current"
+        :calendar="calendar"
+        :orders="filtSingleDateOrders"
+      />
+    </transition-group>
   </div>
 </template>
 
 <script>
 import WeekHeader from './WeekHeader'
 import WeekBody from './WeekBody'
+import DayBody from './DayBody'
 
 let timer = null
 export default {
   name: 'Week',
   components: {
     WeekHeader,
-    WeekBody
+    WeekBody,
+    DayBody
   },
   props: {
-    orders: { type: Array, required: true }
+    mode: { type: String, required: true },
+    orders: { type: Array, required: true },
+    schedules: { type: Array, required: true }
   },
   data () {
     const now = new Date()
@@ -51,8 +71,23 @@ export default {
     }
   },
   computed: {
+    bodyComponent () {
+      const mapCom = {
+        '週': 'WeekBody',
+        '日': 'DayBody'
+      }
+      return mapCom[this.mode]
+    },
+    transitionName () {
+      const mapTrans = {
+        '週': 'scale-out',
+        '日': 'scale-up'
+      }
+      return mapTrans[this.mode]
+    },
     firstDateOfWeek () {
-      const { year, month, date, weekDay } = this.calendar
+      let { year, month, date, weekDay } = this.calendar
+      weekDay = weekDay || 7
       const firstDate = new Date(year, month, date - weekDay + this.startWeekDay)
       return {
         year: firstDate.getFullYear(),
@@ -86,6 +121,7 @@ export default {
       }
       return days
     },
+    // 過濾當週訂單
     filtOrders () {
       const { firstDateOfWeek, lastDateOfWeek } = this
       const first = new Date(firstDateOfWeek.year, firstDateOfWeek.month, firstDateOfWeek.date)
@@ -96,6 +132,19 @@ export default {
         .filter(order => {
           const orderDate = order.reserve.from
           return orderDate > first && orderDate < last
+        })
+    },
+    // 過濾單日訂單
+    filtSingleDateOrders () {
+      const { year, month, date } = this.calendar
+      const singleDateStart = new Date(year, month, date)
+      const singleDateEnd = new Date(year, month, date + 1)
+
+      const { orders } = this
+      return orders
+        .filter(order => {
+          const orderDate = order.reserve.from
+          return orderDate > singleDateStart && orderDate < singleDateEnd
         })
     }
   },
@@ -108,6 +157,20 @@ export default {
   methods: {
     updateCurrentTime () {
       this.current = new Date()
+    },
+    selectDateHandler (newDate) {
+      this.calendar = newDate
+      console.log('🚀 ~ selectDateHandler ~ newDate', newDate)
+    },
+    stepChangeDateHander (step) {
+      const newDate = this.calendar.date + step
+      const newCalender = new Date(this.calendar.year, this.calendar.month, newDate)
+      this.calendar = {
+        year: newCalender.getFullYear(),
+        month: newCalender.getMonth(),
+        date: newCalender.getDate(),
+        weekDay: newCalender.getDay()
+      }
     }
   }
 }

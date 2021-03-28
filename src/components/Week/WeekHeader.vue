@@ -15,15 +15,15 @@
       :key="'week_day' + d"
       class="weekHeader_col weekHeader_weekday"
       :class="{
-        active: activeDay === d
+        active: isActive(d - 1)
       }"
-      @click="setActiveDay(d)"
+      @click="setActiveDay(d - 1)"
     >
       <div class="weekHeader_weekday_name">
-        {{ getDayName(d-1) }}
+        {{ getDayName(d - 1) }}
       </div>
       <div class="weekHeader_weekday_label">
-        {{ getDate(d-1) }}
+        {{ getDate(d - 1) }}
       </div>
       <span :class="{'weekHeader_current': isToday(d-1)}" />
     </div>
@@ -35,6 +35,7 @@ export default {
   name: 'WeekHeader',
   props: {
     today: { type: Object, required: true },
+    calendar: { type: Object, required: true },
     daysOfWeek: { type: Array, required: true }
   },
   data () {
@@ -65,6 +66,12 @@ export default {
         const { year, month, date } = today
         return day.year === year && day.month === month && day.date === date
       }
+    },
+    isActive () {
+      const { calendar, daysOfWeek } = this
+      return d => {
+        return daysOfWeek[d].date === calendar.date
+      }
     }
   },
   mounted () {
@@ -73,6 +80,7 @@ export default {
   methods: {
     setActiveDay (weekDay) {
       this.activeDay = weekDay
+      this.$emit('selectDate', this.daysOfWeek[weekDay])
     }
   }
 }

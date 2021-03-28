@@ -1,42 +1,40 @@
 <template>
-  <div class="weekBody">
+  <div class="dayBody">
     <!-- 時間軸 -->
-    <div class="weekBody_col weekBody_labels">
+    <div class="dayBody_col dayBody_labels">
       <div
         v-for="t in 24"
         :key="'label' + t"
-        class="weekBody_row weekBody_label"
+        class="dayBody_row dayBody_label"
       >
         <span>{{ getTime(t) }}</span>
       </div>
     </div>
-    <!-- 展開時間與日期 -->
-    <div
-      v-for="d in 7"
-      :key="'week_day' + d"
-      class="weekBody_col weekBody_week_day"
-    >
+    <div class="dayBody_col dayBody_time">
       <!-- 現在時間 PIN 針 -->
       <span
         class="pin"
-        :class="{ active: isToday(d-1) }"
+        :class="{ active: isToday }"
         :style="{ top: pinTop + 'px' }"
       />
       <!-- 顯示預約事件 -->
       <div
-        v-for="order in weekDayOrders(d-1)"
+        v-for="order in ordersWithStyle"
         :key="order.id"
-        class="weekBody_order"
+        class="dayBody_order"
         :style="order.style"
       >
-        <span class="weekBody_order_name">
+        <span class="dayBody_order_name">
           {{ order.name }}
+        </span>
+        <span class="dayBody_order_user">
+          {{ order.user }}
         </span>
       </div>
       <div
         v-for="t in 24"
         :key="'week_time' + t"
-        class="weekBody_row weekBody_label"
+        class="dayBody_row weekBody_label"
       />
     </div>
   </div>
@@ -44,12 +42,11 @@
 
 <script>
 export default {
-  name: 'WeekBody',
+  name: 'DayBody',
   props: {
     current: { type: Date, required: true },
-    today: { type: Object, required: true },
+    calendar: { type: Object, required: true },
     orders: { type: Array, required: true },
-    daysOfWeek: { type: Array, required: true },
     use12Hour: { type: Boolean, default: true }
   },
   computed: {
@@ -68,6 +65,11 @@ export default {
       const totalSec = current.getSeconds() + 60 * current.getMinutes() + 60 * 60 * current.getHours()
       const todayMinisec = (totalSec % oneDay)
       return todayMinisec * 70 * 24 / oneDay
+    },
+    isToday () {
+      const { calendar, current } = this
+      const { year, month, date } = calendar
+      return current.getFullYear() === year && current.getMonth() === month && current.getDate() === date
     },
     // 處理當日訂單的樣式
     ordersWithStyle () {
@@ -89,24 +91,6 @@ export default {
             }
           }
         })
-    },
-    // 取得當日的訂單
-    weekDayOrders () {
-      const { ordersWithStyle, daysOfWeek } = this
-      return (d) => {
-        const day = daysOfWeek[d]
-        return ordersWithStyle.filter(order => {
-          return order.reserve.from.getDay() === day.weekDay
-        })
-      }
-    },
-    isToday () {
-      const { today, daysOfWeek } = this
-      return d => {
-        const day = daysOfWeek[d]
-        const { year, month, date } = today
-        return day.year === year && day.month === month && day.date === date
-      }
     }
   }
 }
@@ -118,22 +102,21 @@ $pinColor: #757575;
 $orderBg: #e5e5e5;
 $orderBg: rgba(229, 229, 229, 0.7);
 
-.weekBody {
+.dayBody {
   height: 100%;
+  display: flex;
   overflow: auto;
   display: flex;
-  align-items: stretch;
-
   &::-webkit-scrollbar {
     width: 0;
-  }
-  &_col {
-    width: calc(100% / 8);
   }
   &_row {
     height: 70px;
     border-right: 1px solid $border;
     border-bottom: 1px solid $border;
+  }
+  &_labels {
+    width: calc(100% / 8);
   }
   &_label {
     font-size: 10px;
@@ -144,22 +127,25 @@ $orderBg: rgba(229, 229, 229, 0.7);
       right: 0;
     }
   }
-  &_week_day {
+  &_time {
     position: relative;
+    width: calc(100% * 7 / 8);
   }
   &_order {
     position: absolute;
-    background-color: $orderBg;
-    width: 100%;
-    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     z-index: 1;
-    text-align: left;
+    width: 100%;
     padding: 0.5rem;
+    border-radius: 10px;
     font-size: 0.8rem;
+    background-color: $orderBg;
     cursor: pointer;
   }
-  &_order_name {
-    font-weight: 550;
+  &_order_user {
+    color: #98999a;
   }
   .pin {
     width: 100%;
@@ -169,6 +155,7 @@ $orderBg: rgba(229, 229, 229, 0.7);
     top: 200px;
     left: 0;
     z-index: 2;
+
     &:not(.active) {
       display: none;
     }
