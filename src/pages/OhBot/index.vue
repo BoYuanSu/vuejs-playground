@@ -13,7 +13,7 @@
           >
             <i class="fas fa-chevron-left" />
           </button>
-          <span>{{ '2021 / 00 / 27' }}</span>
+          <span>{{ currentCalendar }}</span>
           <button
             class="ohBot_control_btn next"
             @click="changeDate(+1)"
@@ -47,6 +47,7 @@
       <Week
         ref="week"
         :mode="mode"
+        :calendar.sync="calendar"
         :orders="orders"
         :schedules="schedules"
       />
@@ -68,7 +69,7 @@ export default {
   },
   data () {
     return {
-      mode: '日',
+      mode: '週',
       // 預約
       orders: [
         {
@@ -76,17 +77,17 @@ export default {
           name: '美甲保養1',
           user: '王小美',
           reserve: {
-            from: new Date(2021, 2, 22, 8, 30),
-            to: new Date(2021, 2, 22, 9, 30)
+            from: new Date(2021, 2, 29, 8, 30),
+            to: new Date(2021, 2, 29, 9, 30)
           }
         },
         {
           id: '2',
-          name: '美甲保養2',
+          name: '美甲保養2123213213213213213213213123123321我要預約我要預約我要預約我要預約我要預約我要預約我要預約我要預約我要預約我要預約',
           user: '王大美',
           reserve: {
-            from: new Date(2021, 2, 26, 15, 30),
-            to: new Date(2021, 2, 26, 19, 30)
+            from: new Date(2021, 3, 1, 15, 30),
+            to: new Date(2021, 3, 1, 19, 30)
           }
         },
         {
@@ -94,45 +95,51 @@ export default {
           name: '美甲保養3',
           user: '王中美',
           reserve: {
-            from: new Date(2021, 3, 1, 15, 30),
-            to: new Date(2021, 3, 1, 19, 30)
+            from: new Date(2021, 3, 8, 15, 30),
+            to: new Date(2021, 3, 8, 19, 30)
           }
         }
       ],
       // 排班
       schedules: [
         {
-          id: 's2',
-          name: '',
-          online: {
-            from: new Date(2021, 2, 22, 9, 0),
-            to: new Date(2021, 2, 22, 17, 0)
-          }
-        },
-        {
-          id: 's2',
-          name: '',
-          online: {
-            from: new Date(2021, 3, 26, 9, 0),
-            to: new Date(2021, 3, 26, 17, 0)
-          }
-        },
-        {
           id: 's1',
+          name: '',
+          online: {
+            from: new Date(2021, 2, 29, 9, 0),
+            to: new Date(2021, 2, 29, 17, 0)
+          }
+        },
+        {
+          id: 's2',
           name: '',
           online: {
             from: new Date(2021, 3, 1, 9, 0),
             to: new Date(2021, 3, 1, 17, 0)
           }
+        },
+        {
+          id: 's3',
+          name: '',
+          online: {
+            from: new Date(2021, 3, 2, 9, 0),
+            to: new Date(2021, 3, 2, 17, 0)
+          }
         }
       ],
       calendar: {
-
+        year: 0,
+        month: 0,
+        date: 0,
+        weekDay: 0
       }
     }
   },
   computed: {
-
+    currentCalendar () {
+      const { year, month, date } = this.calendar
+      return `${year} / ${month + 1} / ${date}`
+    }
   },
   methods: {
     setMode (mode) {
@@ -140,11 +147,6 @@ export default {
     },
     changeDate (step) {
       this.$refs.week.stepChangeDateHander(step)
-    },
-    currendCalendar () {
-      const { year, month, date } = this.$refs.week?.calendar || {}
-      console.log('🚀 ~ currendCalendar ~ this.$refs.week', this.$refs.week)
-      return `${year}/${month}/${date}`
     }
   }
 }

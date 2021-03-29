@@ -4,7 +4,7 @@
       <WeekHeader
         :today="today"
         :days-of-week="daysOfWeek"
-        :calendar="bodyComponent === 'DayBody' ? calendar: {}"
+        :calendar="bodyComponent === 'DayBody' ? observeCanlendar: {}"
         @selectDate="selectDateHandler"
         @switchPicker="setShowPicker"
       />
@@ -27,7 +27,7 @@
         v-if="bodyComponent === 'DayBody'"
         key="DayBody"
         :current="current"
-        :calendar="calendar"
+        :calendar="observeCanlendar"
         :orders="filtSingleDateOrders"
       />
     </transition-group>
@@ -35,10 +35,11 @@
       <DatePicker
         v-if="showPicker"
         :current="current"
-        :calendar="calendar"
+        :calendar="observeCanlendar"
         :days-of-month="daysOfMonth"
         :days-of-next-month="daysOfNextMonth"
         @switchPicker="setShowPicker"
+        @changeCalendar="setCalendar"
       />
     </transition>
   </div>
@@ -61,6 +62,7 @@ export default {
   },
   props: {
     mode: { type: String, required: true },
+    calendar: { type: Object, required: true },
     orders: { type: Array, required: true },
     schedules: { type: Array, required: true }
   },
@@ -74,17 +76,25 @@ export default {
         date: now.getDate(),
         weekDay: now.getDay()
       },
-      calendar: {
-        year: now.getFullYear(),
-        month: now.getMonth(),
-        date: now.getDate(),
-        weekDay: now.getDay()
-      },
       startWeekDay: 1,
-      showPicker: true
+      showPicker: false
     }
   },
   computed: {
+    observeCanlendar: {
+      get () {
+        return this.calendar
+      },
+      set (newCalendar) {
+        const newDate = new Date(newCalendar.year, newCalendar.month, newCalendar.date)
+        this.$emit('update:calendar', {
+          year: newDate.getFullYear(),
+          month: newDate.getMonth(),
+          date: newDate.getDate(),
+          weekDay: newDate.getDay()
+        })
+      }
+    },
     bodyComponent () {
       const mapCom = {
         '週': 'WeekBody',
@@ -100,7 +110,7 @@ export default {
       return mapTrans[this.mode]
     },
     firstDateOfWeek () {
-      let { year, month, date, weekDay } = this.calendar
+      let { year, month, date, weekDay } = this.observeCanlendar
       weekDay = weekDay || 7
       const firstDate = new Date(year, month, date - weekDay + this.startWeekDay)
       return {
@@ -136,7 +146,7 @@ export default {
       return days
     },
     firstDateOfMonth () {
-      const { year, month } = this.calendar
+      const { year, month } = this.observeCanlendar
       const firstDate = new Date(year, month, 1)
       return {
         year: firstDate.getFullYear(),
@@ -176,7 +186,7 @@ export default {
       })
     },
     firstDateOfNextMonth () {
-      const { year, month } = this.calendar
+      const { year, month } = this.observeCanlendar
       const firstDate = new Date(year, month + 1, 1)
       return {
         year: firstDate.getFullYear(),
@@ -230,7 +240,7 @@ export default {
     },
     // 過濾單日訂單
     filtSingleDateOrders () {
-      const { year, month, date } = this.calendar
+      const { year, month, date } = this.observeCanlendar
       const singleDateStart = new Date(year, month, date)
       const singleDateEnd = new Date(year, month, date + 1)
 
@@ -240,6 +250,15 @@ export default {
           const orderDate = order.reserve.from
           return orderDate > singleDateStart && orderDate < singleDateEnd
         })
+    }
+  },
+  created () {
+    const { current } = this
+    this.observeCanlendar = {
+      year: current.getFullYear(),
+      month: current.getMonth(),
+      date: current.getDate(),
+      weekDay: current.getDay()
     }
   },
   mounted () {
@@ -253,13 +272,12 @@ export default {
       this.current = new Date()
     },
     selectDateHandler (newDate) {
-      this.calendar = newDate
-      console.log('🚀 ~ selectDateHandler ~ newDate', newDate)
+      this.observeCanlendar = newDate
     },
     stepChangeDateHander (step) {
-      const newDate = this.calendar.date + step
-      const newCalender = new Date(this.calendar.year, this.calendar.month, newDate)
-      this.calendar = {
+      const newDate = this.observeCanlendar.date + step
+      const newCalender = new Date(this.observeCanlendar.year, this.observeCanlendar.month, newDate)
+      this.observeCanlendar = {
         year: newCalender.getFullYear(),
         month: newCalender.getMonth(),
         date: newCalender.getDate(),
@@ -268,6 +286,9 @@ export default {
     },
     setShowPicker (show) {
       this.showPicker = show
+    },
+    setCalendar (newCalendar) {
+      this.observeCanlendar = newCalendar
     }
   }
 }

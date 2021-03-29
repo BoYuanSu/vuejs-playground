@@ -129,7 +129,6 @@ export default {
       const currentMonth = this.currentMonth.month
       return daysOfMonth.map(day => {
         const disabled = day.month !== currentMonth
-
         return {
           ...day,
           disabled,
@@ -153,7 +152,7 @@ export default {
   },
   methods: {
     closeHandler () {
-      this.$emit('switchPicker')
+      this.$emit('switchPicker', false)
     },
     selectHandler (day) {
       if (day.disabled) return
@@ -164,8 +163,10 @@ export default {
       this.select.weekDay = weekDay
     },
     confirmSelect () {
-      this.$emit('input', this.select)
-      this.$emit('switchPicker')
+      if (this.select.year !== 0) {
+        this.$emit('changeCalendar', this.select)
+      }
+      this.closeHandler()
     }
   }
 }
@@ -242,15 +243,19 @@ export default {
   &_date {
     width: calc(90vw / 7);
     padding: 0.5rem 0.5rem;
+    padding-top: 1rem;
     cursor: pointer;
     position: relative;
     text-align: center;
+    font-size: 0.8rem;
+    color: #838383;
+    font-weight: 550;
 
     &:hover {
       &::before {
         content: "";
         left: calc(50% - 1rem);
-        top: 0.25rem;
+        top: 0.5rem;
         width: 2rem;
         height: 2rem;
         border-radius: 50%;
@@ -265,7 +270,7 @@ export default {
       &::before {
         content: "";
         left: calc(50% - 1rem);
-        top: 0.25rem;
+        top: 0.5rem;
         width: 2rem;
         height: 2rem;
         border-radius: 50%;

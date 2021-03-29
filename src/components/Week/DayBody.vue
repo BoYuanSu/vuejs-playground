@@ -141,6 +141,7 @@ $orderBg: rgba(229, 229, 229, 0.7);
     padding: 0.5rem;
     border-radius: 10px;
     font-size: 0.8rem;
+    text-align: left;
     background-color: $orderBg;
     cursor: pointer;
   }

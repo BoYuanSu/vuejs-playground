@@ -157,6 +157,9 @@ $orderBg: rgba(229, 229, 229, 0.7);
     padding: 0.5rem;
     font-size: 0.8rem;
     cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
   }
   &_order_name {
     font-weight: 550;
