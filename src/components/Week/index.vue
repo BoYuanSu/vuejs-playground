@@ -22,6 +22,7 @@
         :today="today"
         :orders="filtOrders"
         :days-of-week="daysOfWeek"
+        :schedules="filtSchedules"
       />
       <DayBody
         v-if="bodyComponent === 'DayBody'"
@@ -29,6 +30,7 @@
         :current="current"
         :calendar="observeCanlendar"
         :orders="filtSingleDateOrders"
+        :schedules="filtSingleDateSchedules"
       />
     </transition-group>
     <transition name="fade">
@@ -249,6 +251,32 @@ export default {
         .filter(order => {
           const orderDate = order.reserve.from
           return orderDate > singleDateStart && orderDate < singleDateEnd
+        })
+    },
+    // 過濾當週排班
+    filtSchedules () {
+      const { firstDateOfWeek, lastDateOfWeek } = this
+      const first = new Date(firstDateOfWeek.year, firstDateOfWeek.month, firstDateOfWeek.date)
+      const last = new Date(lastDateOfWeek.year, lastDateOfWeek.month, lastDateOfWeek.date)
+
+      const { schedules } = this
+      return schedules
+        .filter(schedule => {
+          const scheduleDate = schedule.online.from
+          return scheduleDate > first && scheduleDate < last
+        })
+    },
+    // 過濾當日排班
+    filtSingleDateSchedules () {
+      const { year, month, date } = this.observeCanlendar
+      const singleDateStart = new Date(year, month, date)
+      const singleDateEnd = new Date(year, month, date + 1)
+
+      const { schedules } = this
+      return schedules
+        .filter(schedule => {
+          const scheduleDate = schedule.online.from
+          return scheduleDate > singleDateStart && scheduleDate < singleDateEnd
         })
     }
   },

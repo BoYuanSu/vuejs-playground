@@ -22,6 +22,13 @@
         :class="{ active: isToday(d-1) }"
         :style="{ top: pinTop + 'px' }"
       />
+      <!-- 顯示排班 -->
+      <div
+        v-for="schedule in weekDaySchedules(d-1)"
+        :key="schedule.id"
+        class="weekBody_schedule"
+        :style="schedule.style"
+      />
       <!-- 顯示預約事件 -->
       <div
         v-for="order in weekDayOrders(d-1)"
@@ -49,6 +56,7 @@ export default {
     current: { type: Date, required: true },
     today: { type: Object, required: true },
     orders: { type: Array, required: true },
+    schedules: { type: Array, required: true },
     daysOfWeek: { type: Array, required: true },
     use12Hour: { type: Boolean, default: true }
   },
@@ -100,6 +108,37 @@ export default {
         })
       }
     },
+    // 處理當日排班的樣式
+    schedulesWithStyle () {
+      const { schedules } = this
+      const oneDay = 24 * 60 * 60
+      const HeightPerHour = 70
+
+      return schedules
+        .map(schedule => {
+          const { from, to } = schedule.online
+          const height = (to - from) * HeightPerHour / (60 * 60 * 1000)
+          const totalSec = from.getSeconds() + 60 * from.getMinutes() + 60 * 60 * from.getHours()
+          const top = (totalSec % oneDay) * HeightPerHour * 24 / oneDay
+          return {
+            ...schedule,
+            style: {
+              height: height + 'px',
+              top: top + 'px'
+            }
+          }
+        })
+    },
+    // 取得當日的排班
+    weekDaySchedules () {
+      const { schedulesWithStyle, daysOfWeek } = this
+      return (d) => {
+        const day = daysOfWeek[d]
+        return schedulesWithStyle.filter(order => {
+          return order.online.from.getDay() === day.weekDay
+        })
+      }
+    },
     isToday () {
       const { today, daysOfWeek } = this
       return d => {
@@ -117,7 +156,7 @@ $border: #d4d5d6;
 $pinColor: #757575;
 $orderBg: #e5e5e5;
 $orderBg: rgba(229, 229, 229, 0.7);
-
+$scheduleBg: rgba(246, 246, 246, 0.5);
 .weekBody {
   height: 100%;
   overflow: auto;
@@ -163,6 +202,19 @@ $orderBg: rgba(229, 229, 229, 0.7);
   }
   &_order_name {
     font-weight: 550;
+  }
+  &_schedule {
+    position: absolute;
+    background-color: $scheduleBg;
+    width: 100%;
+    z-index: 1;
+    text-align: left;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
   }
   .pin {
     width: 100%;

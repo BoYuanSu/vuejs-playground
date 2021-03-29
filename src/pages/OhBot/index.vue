@@ -26,6 +26,7 @@
         <b-dropdown
           :text="mode+'檢視'"
           class="mr-3"
+          toggle-class="text-primary rounded-pill"
         >
           <b-dropdown-item @click="setMode('週')">
             週
@@ -36,7 +37,7 @@
         </b-dropdown>
         <b-dropdown
           text="測試"
-          pill
+          toggle-class="text-primary rounded-pill"
         >
           <b-dropdown-item>測試</b-dropdown-item>
         </b-dropdown>
@@ -87,7 +88,7 @@ export default {
           user: '王大美',
           reserve: {
             from: new Date(2021, 3, 1, 15, 30),
-            to: new Date(2021, 3, 1, 19, 30)
+            to: new Date(2021, 3, 1, 16, 30)
           }
         },
         {

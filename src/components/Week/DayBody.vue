@@ -17,6 +17,13 @@
         :class="{ active: isToday }"
         :style="{ top: pinTop + 'px' }"
       />
+      <!-- 顯示排班 -->
+      <div
+        v-for="schedule in schedulesWithStyle"
+        :key="schedule.id"
+        class="dayBody_schedule"
+        :style="schedule.style"
+      />
       <!-- 顯示預約事件 -->
       <div
         v-for="order in ordersWithStyle"
@@ -46,6 +53,7 @@ export default {
   props: {
     current: { type: Date, required: true },
     calendar: { type: Object, required: true },
+    schedules: { type: Array, required: true },
     orders: { type: Array, required: true },
     use12Hour: { type: Boolean, default: true }
   },
@@ -91,6 +99,27 @@ export default {
             }
           }
         })
+    },
+    // 處理當日排班的樣式
+    schedulesWithStyle () {
+      const { schedules } = this
+      const oneDay = 24 * 60 * 60
+      const HeightPerHour = 70
+
+      return schedules
+        .map(schedule => {
+          const { from, to } = schedule.online
+          const height = (to - from) * HeightPerHour / (60 * 60 * 1000)
+          const totalSec = from.getSeconds() + 60 * from.getMinutes() + 60 * 60 * from.getHours()
+          const top = (totalSec % oneDay) * HeightPerHour * 24 / oneDay
+          return {
+            ...schedule,
+            style: {
+              height: height + 'px',
+              top: top + 'px'
+            }
+          }
+        })
     }
   }
 }
@@ -101,6 +130,7 @@ $border: #d4d5d6;
 $pinColor: #757575;
 $orderBg: #e5e5e5;
 $orderBg: rgba(229, 229, 229, 0.7);
+$scheduleBg: rgba(246, 246, 246, 0.5);
 
 .dayBody {
   height: 100%;
@@ -143,6 +173,19 @@ $orderBg: rgba(229, 229, 229, 0.7);
     font-size: 0.8rem;
     text-align: left;
     background-color: $orderBg;
+    cursor: pointer;
+  }
+  &_schedule {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    z-index: 1;
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    text-align: left;
+    background-color: $scheduleBg;
     cursor: pointer;
   }
   &_order_user {

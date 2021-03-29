@@ -218,14 +218,16 @@ export default {
   }
   &_weekday {
     display: flex;
-    width: 90vw;
+    width: calc(90vw - 15px);
     margin: auto;
   }
   &_weekday_label {
-    width: calc(90vw / 7);
+    font-weight: 550;
+    width: calc((90vw - 15px) / 7);
   }
   &_body {
     height: calc(100vh - 112px);
+    padding-bottom: 3.2rem;
     overflow: auto;
     &::-webkit-scrollbar {
       width: 0px;
@@ -237,11 +239,11 @@ export default {
   &_month {
     display: flex;
     flex-wrap: wrap;
-    width: 90vw;
+    width: calc(90vw - 15px);
     margin: auto;
   }
   &_date {
-    width: calc(90vw / 7);
+    width: calc((90vw - 15px) / 7);
     padding: 0.5rem 0.5rem;
     padding-top: 1rem;
     cursor: pointer;
