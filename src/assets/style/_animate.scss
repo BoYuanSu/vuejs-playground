@@ -24,7 +24,7 @@
     opacity: 1;
 }
 
-.scale-out-enter-active{
+.scale-out-enter-active {
     transition: 1s;
 }
 .scale-out-leave-active {
@@ -42,4 +42,19 @@
 .scale-out-enter-to {
     transform: scaleX(1);
     opacity: 1;
+}
+
+.fade-enter,
+.fade-leave-to {
+    opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave {
+    opacity: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: 0.5s;
 }

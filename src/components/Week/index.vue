@@ -6,6 +6,7 @@
         :days-of-week="daysOfWeek"
         :calendar="bodyComponent === 'DayBody' ? calendar: {}"
         @selectDate="selectDateHandler"
+        @switchPicker="setShowPicker"
       />
     </div>
     <transition-group
@@ -30,7 +31,16 @@
         :orders="filtSingleDateOrders"
       />
     </transition-group>
-    <DatePicker v-if="showPicker" />
+    <transition name="fade">
+      <DatePicker
+        v-if="showPicker"
+        :current="current"
+        :calendar="calendar"
+        :days-of-month="daysOfMonth"
+        :days-of-next-month="daysOfNextMonth"
+        @switchPicker="setShowPicker"
+      />
+    </transition>
   </div>
 </template>
 
@@ -125,6 +135,86 @@ export default {
       }
       return days
     },
+    firstDateOfMonth () {
+      const { year, month } = this.calendar
+      const firstDate = new Date(year, month, 1)
+      return {
+        year: firstDate.getFullYear(),
+        month: firstDate.getMonth(),
+        date: firstDate.getDate(),
+        weekDay: firstDate.getDay()
+      }
+    },
+    firstDateOfCanlender () {
+      let { year, month, date, weekDay } = this.firstDateOfMonth
+      weekDay = weekDay || 7
+      const firstDate = new Date(year, month, date - weekDay + this.startWeekDay)
+      return {
+        year: firstDate.getFullYear(),
+        month: firstDate.getMonth(),
+        date: firstDate.getDate(),
+        weekDay: firstDate.getDay()
+      }
+    },
+    daysOfMonth () {
+      const days = []
+      const { year, month, date } = this.firstDateOfCanlender
+      const { month: currentMonth } = this.firstDateOfMonth
+      let day = null
+      let i = 0
+      for (i; i < 42; i++) {
+        day = new Date(year, month, date + i)
+        days.push({
+          year: day.getFullYear(),
+          month: day.getMonth(),
+          date: day.getDate(),
+          weekDay: day.getDay()
+        })
+      }
+      return days.filter((day, i) => {
+        return day.month <= currentMonth
+      })
+    },
+    firstDateOfNextMonth () {
+      const { year, month } = this.calendar
+      const firstDate = new Date(year, month + 1, 1)
+      return {
+        year: firstDate.getFullYear(),
+        month: firstDate.getMonth(),
+        date: firstDate.getDate(),
+        weekDay: firstDate.getDay()
+      }
+    },
+    firstDateOfNextCanlender () {
+      let { year, month, date, weekDay } = this.firstDateOfNextMonth
+      weekDay = weekDay || 7
+      const firstDate = new Date(year, month, date - weekDay + this.startWeekDay)
+      return {
+        year: firstDate.getFullYear(),
+        month: firstDate.getMonth(),
+        date: firstDate.getDate(),
+        weekDay: firstDate.getDay()
+      }
+    },
+    daysOfNextMonth () {
+      const days = []
+      const { year, month, date } = this.firstDateOfNextCanlender
+      const { month: currentMonth } = this.firstDateOfNextMonth
+      let day = null
+      let i = 0
+      for (i; i < 42; i++) {
+        day = new Date(year, month, date + i)
+        days.push({
+          year: day.getFullYear(),
+          month: day.getMonth(),
+          date: day.getDate(),
+          weekDay: day.getDay()
+        })
+      }
+      return days.filter((day, i) => {
+        return day.month <= currentMonth
+      })
+    },
     // 過濾當週訂單
     filtOrders () {
       const { firstDateOfWeek, lastDateOfWeek } = this
@@ -175,6 +265,9 @@ export default {
         date: newCalender.getDate(),
         weekDay: newCalender.getDay()
       }
+    },
+    setShowPicker (show) {
+      this.showPicker = show
     }
   }
 }

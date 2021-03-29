@@ -1,6 +1,9 @@
 <template>
   <div class="weekHeader">
-    <div class="weekHeader_col">
+    <div
+      class="weekHeader_col"
+      @click="openHandler"
+    >
       <span class="weekHeader_icon text-primary"><i class="far fa-calendar" /></span>
     </div>
     <div
@@ -74,6 +77,9 @@ export default {
     setActiveDay (weekDay) {
       this.activeDay = weekDay
       this.$emit('selectDate', this.daysOfWeek[weekDay])
+    },
+    openHandler () {
+      this.$emit('switchPicker', true)
     }
   }
 }
