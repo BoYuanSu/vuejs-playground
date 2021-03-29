@@ -6,9 +6,6 @@ import store from './store'
 import '@fortawesome/fontawesome-free/css/all.css'
 
 import './plugins/boostrap'
-import dayjs from './plugins/dayjs'
-
-Vue.prototype.$dayjs = dayjs
 
 Vue.config.productionTip = false
 
