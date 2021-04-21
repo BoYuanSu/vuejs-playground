@@ -1,0 +1,42 @@
+$lg-pc-media: 1199px;
+$pc-media: 992px;
+$pcs-media: 991px;
+$pad-media: 768px;
+$pads-media: 767px;
+$phone-media: 576px;
+$phones-media: 575px;
+$small-phone-media: 375px;
+$small-phones-media: 374px;
+// large
+@mixin pc-width {
+    @media screen and (max-width: $lg-pc-media) {
+        @content;
+    }
+}
+
+// Medium
+@mixin pad-width {
+    @media screen and (max-width: $pcs-media) {
+        @content;
+    }
+}
+
+// Small
+@mixin small-pad-width {
+    @media screen and (max-width: $pads-media) {
+        @content;
+    }
+}
+
+// Extra Small
+@mixin phone-width {
+    @media screen and (max-width: $phones-media) {
+        @content;
+    }
+}
+
+@mixin small-phone-width {
+    @media screen and (max-width: $small-phones-media) {
+        @content;
+    }
+}

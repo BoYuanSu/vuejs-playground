@@ -1,7 +1,17 @@
 @import "animate.scss";
 
+@import "mixin/rwd";
+
+$primary: #7f74b4;
+$secondary: #dedaf4;
+
+@import "../../../node_modules/bootstrap/scss/bootstrap.scss";
+@import "../../../node_modules/bootstrap-vue/src/index.scss";
+
+@import 'page-home';
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
