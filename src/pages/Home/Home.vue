@@ -56,8 +56,8 @@ export default {
         },
         {
           img: 'https://picsum.photos/id/684/600/400',
-          name: 'OhBot 行事曆1',
-          link: { name: 'OhBot' }
+          name: '口罩地圖',
+          link: { name: 'MaskMap' }
         },
         {
           img: 'https://picsum.photos/id/684/600/400',

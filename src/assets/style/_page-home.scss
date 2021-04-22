@@ -2,6 +2,7 @@ body {
     background-color: #f2f2f2;
 }
 .home {
+    min-width: 320px;
 }
 
 .user-info {
@@ -37,12 +38,10 @@ body {
             background: #ffffff;
         }
         &-img-header {
+            height: 200px;
             border-top-right-radius: 10px;
             border-top-left-radius: 10px;
             overflow: hidden;
-            img {
-                width: 100%;
-            }
         }
     }
     .portfolio + .portfolio {

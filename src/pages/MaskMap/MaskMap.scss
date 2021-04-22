@@ -1,0 +1,10 @@
+@import "../../../node_modules/leaflet/dist/leaflet.css";
+
+.mask-map{
+    &-main{
+        height: 100vh;
+    }
+    #map {
+        height: 100%;
+    }
+}

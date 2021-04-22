@@ -16,6 +16,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "oh-bot" */ '../pages/OhBot')
   },
   {
+    path: '/mask-map',
+    name: 'MaskMap',
+    component: () => import(/* webpackChunkName: "mask-map" */ '../pages/MaskMap/MaskMap.vue')
+  },
+  {
     path: '*',
     redirect: 'Home'
   }
